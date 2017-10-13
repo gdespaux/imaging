@@ -21,51 +21,35 @@ namespace SeatraxImaging {
             RecordNiceName = recordFields[6];
             if (recordFields.Length > 7) {
                 //Debug.WriteLine(recordFields[7]);
-                RecordUploadDate = UnixTimeStampToDateTime(double.Parse(recordFields[7])).ToString();
+                RecordUploadDate = UnixTimeStampToDateTime(double.Parse(recordFields[10])).ToString();
             }
         }
 
-        public RecordInfo(string recordName) {
-            //Used when adding new files, will be blank until indexed
-            RecordName = recordName;
-        }
+        //public string Value { get; set; }
 
-        private bool isReadOnly = true;
-
-        public bool IsReadOnly {
-            get {
-                return isReadOnly;
-            }
-            set {
-                isReadOnly = value;
-                //Debug.WriteLine("ReadOnly " + value);
-                OnPropertyChanged();
-            }
-        }
-
-        public string Value { get; set; }
+        private string recordName;
 
         public string RecordId { get; }
-        public string RecordName { get; set; }
+
+        public string RecordName {
+            get { return recordName; }
+            set {
+                if (recordName == null) {
+                    recordName = value;
+                }
+                else {
+                    recordName = value;
+                    App.recordViewModel.UpdateSingleRecordField(RecordLookup.CurrentApplication, RecordId, "Vendor Name", value);
+                }
+            }
+        }
+
         public string RecordWeekEndingDate { get; set; }
         public string RecordCheckNumber { get; set; }
         public string RecordAmount { get; set; }
         public string RecordFilePath { get; } //field1
         public string RecordNiceName { get; set; } //field2
         public string RecordUploadDate { get; }
-
-        private bool saveButtonVisible = false;
-
-        public bool SaveButtonVisible {
-            get {
-                return saveButtonVisible;
-            }
-            set {
-                saveButtonVisible = value;
-                //Debug.WriteLine("SaveButtonVisible " + value);
-                OnPropertyChanged();
-            }
-        }
 
         public void SaveRecordToDatabase() {
             App.recordViewModel.UpdateRecordInfo(this);
